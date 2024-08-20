@@ -1,10 +1,23 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { TableRow, TableCell } from "@/components/ui/table";
 import { ArrowRight, Search, X } from "lucide-react";
 import { OrderDetails } from "./order-details";
+import { OrderStatus } from "@/components/order-status";
+import { formatDistanceToNow } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 
-export function OrderTableRow() {
+export interface OrderTableRowProps {
+  order: {
+    orderId: string
+    createdAt: string
+    status: "pending" | "canceled" | "processing" | "delivering" | "delivered"
+    customerName: string
+    total: number
+  }
+}
+
+export function OrderTableRow({ order }: OrderTableRowProps) {
   return(
     <TableRow> 
       <TableCell>
@@ -21,19 +34,25 @@ export function OrderTableRow() {
         
       </TableCell>
       <TableCell className="font-mono text-xs font-medium">
-        weqr9we9r8we9r5w6598656
+        {order.orderId}
       </TableCell>
-      <TableCell className="text-muted-foregound">
-        há 15 minutos
-      </TableCell>
+        <TableCell className="text-muted-foregound">
+          {formatDistanceToNow(order.createdAt, {
+            locale: ptBR,
+            addSuffix: true,
+          })}
+        </TableCell>
       <TableCell>
-        
+        <OrderStatus status={order.status} />
       </TableCell>
       <TableCell className="font-medium">
-        Alisson Barbosa Diniz
+        {order.customerName}
       </TableCell>
       <TableCell className="font-medium">
-        R$ 149,90
+        {order.total.toLocaleString('pt-BR', {
+          style: 'currency', 
+          currency: 'BRL',
+        })}
       </TableCell>
       <TableCell>
         <Button variant="outline" size='xs'>
